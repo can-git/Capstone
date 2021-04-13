@@ -17,10 +17,12 @@ class MyApp(tk.Frame):
         self.root = parent
         self.root.title("Detection Interface")
         self.root.resizable(False, False)
+
         self.defaultBackground()
+
         # self.displayF()
         self.settingsF()
-        self.modelF()
+        self.ModelEvaluationF()
 
     def defaultBackground(self):
         # region MENU
@@ -38,24 +40,21 @@ class MyApp(tk.Frame):
 
         # region GRID
         self.frameLeft = tk.LabelFrame(self)
-        self.frameLeft.pack(side=tk.LEFT)
+        self.frameLeft.pack(side=tk.LEFT, fill='both')
         self.frameRight = tk.LabelFrame(self)
-        self.frameRight.pack(side=tk.RIGHT, expand=True)
-        # grid(row=0, column=2, padx=10, pady=10)
+        self.frameRight.pack(side=tk.RIGHT, fill='both')
         # endregion
 
         # region NOTEBOOK
         self.notebook = ttk.Notebook(self.frameLeft)
-        self.notebook.pack(fill='both', expand=True)
+        self.notebook.pack(fill='both')
         self.tab_Display = tk.Frame(self.notebook, width=200, height=700)
         self.tab_Settings = tk.Frame(self.notebook, width=200, height=700)
         self.tab_Model = tk.Frame(self.notebook, width=200, height=700)
-        self.tab_Evaluation = tk.Frame(self.notebook, width=200, height=700)
         self.tab_Detection = tk.Frame(self.notebook, width=200, height=700)
         self.notebook.add(self.tab_Display, text="Display")
         self.notebook.add(self.tab_Settings, text="Settings")
-        self.notebook.add(self.tab_Model, text="Model")
-        self.notebook.add(self.tab_Evaluation, text="Evaluation")
+        self.notebook.add(self.tab_Model, text="Model Evaluation")
         self.notebook.add(self.tab_Detection, text="Detection")
         # endregion
 
@@ -195,9 +194,33 @@ class MyApp(tk.Frame):
         ckbxMean.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
         # endregion
 
+        # region Model
+        model_frame = tk.LabelFrame(self.tab_Settings, text="Model")
+        model_frame.grid(row=1, column=0, padx=10, pady=10)
+
+        lblClassifier = tk.Label(model_frame, text="Classifier")
+        lblClassifier.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
+
+        dictClassifiers = tk.StringVar()
+        comboClassifiers = ttk.Combobox(model_frame, width=25, textvariable=dictClassifiers, state="readonly")
+        comboClassifiers.grid(row=0, column=1, padx=10, pady=10)
+        comboClassifiers['values'] = ('Naive Bayes', 'Decision Tree', 'Random Forest')
+
+        lblEpoch = tk.Label(model_frame, text="Epochs")
+        lblEpoch.grid(row=1, column=0, padx=10, pady=10, sticky=tk.W)
+        lblBacth = tk.Label(model_frame, text="Batch Size")
+        lblBacth.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
+        e1 = tk.IntVar(value=1)
+        entry1 = tk.Entry(model_frame, textvariable=e1, width=10)
+        entry1.grid(row=1, column=1, padx=10, pady=10, sticky=tk.E)
+        e2 = tk.IntVar(value=1)
+        entry2 = tk.Entry(model_frame, textvariable=e2, width=10)
+        entry2.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
+        # endregion
+
         # region Filter
         filter_frame = tk.LabelFrame(self.tab_Settings, text="Filtering")
-        filter_frame.grid(row=1, column=0, padx=10, pady=10)
+        filter_frame.grid(row=2, column=0, padx=10, pady=10)
 
         valEnable = tk.IntVar(value=1)
         ckbxEnable = tk.Checkbutton(filter_frame, text="Enable", variable=valEnable)
@@ -234,24 +257,9 @@ class MyApp(tk.Frame):
         # endregion
     # endregion
 
-    # region ModelF
-    def modelF(self):
-        lblClassifier = tk.Label(self.tab_Model, text="Classifier")
-        lblClassifier.grid(row=0, column=0, padx=10, pady=10)
-
-        dictClassifiers = tk.StringVar()
-        comboClassifiers = ttk.Combobox(self.tab_Model, width=25, textvariable=dictClassifiers, state="readonly")
-        comboClassifiers.grid(row=0, column=1, padx=10, pady=10)
-        comboClassifiers['values'] = ('Naive Bayes', 'Decision Tree', 'Random Forest')
-
-        importB = tk.Button(self.tab_Model, text="Import")
-        importB.grid(row=1, column=0, padx=10, pady=10)
-        createB = tk.Button(self.tab_Model, text="Create")
-        createB.grid(row=1, column=1, padx=10, pady=10)
-
-        progress = ttk.Progressbar(self.tab_Model, orient=tk.HORIZONTAL, length=250, mode='determinate')
-        progress.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
-
+    # region ModelEvaluationF
+    def ModelEvaluationF(self):
+        # region Create
         def bar():
             import time
             progress['value'] = 20
@@ -274,15 +282,47 @@ class MyApp(tk.Frame):
             root.update_idletasks()
             time.sleep(1)
             progress['value'] = 100
+        createB = tk.Button(self.tab_Model, text="Create and Test", command=bar)
+        createB.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
+        progress = ttk.Progressbar(self.tab_Model, orient=tk.HORIZONTAL, length=150, mode='determinate')
+        progress.grid(row=0, column=1, padx=10, pady=10, sticky=tk.W)
+        # endregion
 
-        fillB = tk.Button(self.tab_Model, text="fill", command=bar)
-        fillB.grid(row=3, column=0, padx=10, pady=10)
+        # region Evaluation
+        performance_frame = tk.LabelFrame(self.tab_Model, text="Performance")
+        performance_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
 
+        lblAcc = tk.Label(performance_frame, text="Accuracy")
+        lblAcc.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
+        lblLoss = tk.Label(performance_frame, text="Loss")
+        lblLoss.grid(row=1, column=0, padx=10, pady=10, sticky=tk.W)
+        lblPrecision = tk.Label(performance_frame, text="Precision")
+        lblPrecision.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
+        lblRecall = tk.Label(performance_frame, text="Recall")
+        lblRecall.grid(row=3, column=0, padx=10, pady=10, sticky=tk.W)
+        lblF1 = tk.Label(performance_frame, text="F1")
+        lblF1.grid(row=4, column=0, padx=10, pady=10, sticky=tk.W)
 
+        eAcc = tk.DoubleVar(value=0.0)
+        entryAcc = tk.Entry(performance_frame, textvariable=eAcc, width=15, state='readonly', justify=tk.CENTER)
+        entryAcc.grid(row=0, column=1, padx=10, pady=10, sticky=tk.E)
+        eLoss = tk.DoubleVar(value=0.0)
+        entryLoss = tk.Entry(performance_frame, textvariable=eLoss, width=15, state='readonly', justify=tk.CENTER)
+        entryLoss.grid(row=1, column=1, padx=10, pady=10, sticky=tk.E)
+        ePrecision = tk.DoubleVar(value=0.0)
+        entryPrecision = tk.Entry(performance_frame, textvariable=ePrecision, width=15, state='readonly', justify=tk.CENTER)
+        entryPrecision.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
+        eRecall = tk.DoubleVar(value=0.0)
+        entryRecall = tk.Entry(performance_frame, textvariable=eRecall, width=15, state='readonly', justify=tk.CENTER)
+        entryRecall.grid(row=3, column=1, padx=10, pady=10, sticky=tk.E)
+        eF1 = tk.DoubleVar(value=0.0)
+        entryF1 = tk.Entry(performance_frame, textvariable=eF1, width=15, state='readonly', justify=tk.CENTER)
+        entryF1.grid(row=4, column=1, padx=10, pady=10, sticky=tk.E)
+        # endregion
     # endregion
 
-    # region EvaluationF
-    def EvaluationF(self):
+    # region DetectionF
+    def DetectionF(self):
         pass
     # endregion
 
