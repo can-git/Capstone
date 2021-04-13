@@ -4,12 +4,13 @@ from tkinter import filedialog
 import mne
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg)
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from CenterScreen import center_screen_geometry
 from matplotlib.pyplot import MultipleLocator
 import mpl_toolkits.axisartist as axisartist
 import model as m
+import time
+from threading import Thread
 
 
 class MyApp(tk.Frame):
@@ -20,7 +21,6 @@ class MyApp(tk.Frame):
         self.root.resizable(False, False)
 
         self.defaultBackground()
-        model = m
         # self.displayF()
         self.settingsF()
         self.ModelEvaluationF()
@@ -261,36 +261,40 @@ class MyApp(tk.Frame):
     # region ModelEvaluationF
     def ModelEvaluationF(self):
         # region Create
-        def bar():
+        def result_scores(dict):
+            self.eAcc.set(dict.get('Accuracy'))
+            self.ePrecision.set(dict.get('Precision'))
+            self.eRecall.set(dict.get('Recall'))
+            self.eF1.set(dict.get('F1'))
+
+        def progress_bar(x, text):
+            self.lblProgress['text'] = text
+            progress['value'] = x
+            root.update_idletasks()
+            time.sleep(0.5)
+
+        def model_training():
+            progress_bar(10, 'Getting Epoch Value')
             m.model.set_epoch(self, self.eEpoch.get())
+            progress_bar(20, 'Getting Batch Size Value')
             m.model.set_batch(self, self.eBatch.get())
-            m.model.pr(self)
+            progress_bar(30, 'Adding Train and Test Data')
+            m.model.add_data(self)
+            progress_bar(40, 'Reshaping')
+            m.model.reShape(self)
+            progress_bar(50, 'Creating Model')
+            m.model.DecisionTreefit(self)
+            progress_bar(90, 'Results Coming')
+            result_scores(m.model.score(self))
+            progress_bar(100, 'Completed..')
 
+        def btn_trigger():
+            Thread(target=model_training).start()
+            Thread(target=progress_bar(0, '')).start()
 
-
-
-            import time
-            progress['value'] = 20
-            root.update_idletasks()
-            time.sleep(1)
-
-            progress['value'] = 40
-            root.update_idletasks()
-            time.sleep(1)
-
-            progress['value'] = 50
-            root.update_idletasks()
-            time.sleep(1)
-
-            progress['value'] = 60
-            root.update_idletasks()
-            time.sleep(1)
-
-            progress['value'] = 80
-            root.update_idletasks()
-            time.sleep(1)
-            progress['value'] = 100
-        createB = tk.Button(self.tab_Model, text="Create and Test", command=bar)
+        self.lblProgress = tk.Label(self.tab_Model, text='')
+        self.lblProgress.grid(row=1, column=1, padx=2, pady=2, sticky=tk.E)
+        createB = tk.Button(self.tab_Model, text="Create and Test", command=btn_trigger)
         createB.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
         progress = ttk.Progressbar(self.tab_Model, orient=tk.HORIZONTAL, length=150, mode='determinate')
         progress.grid(row=0, column=1, padx=10, pady=10, sticky=tk.W)
@@ -298,7 +302,7 @@ class MyApp(tk.Frame):
 
         # region Evaluation
         performance_frame = tk.LabelFrame(self.tab_Model, text="Performance")
-        performance_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+        performance_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
         lblAcc = tk.Label(performance_frame, text="Accuracy")
         lblAcc.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
@@ -311,20 +315,20 @@ class MyApp(tk.Frame):
         lblF1 = tk.Label(performance_frame, text="F1")
         lblF1.grid(row=4, column=0, padx=10, pady=10, sticky=tk.W)
 
-        eAcc = tk.DoubleVar(value=0.0)
-        entryAcc = tk.Entry(performance_frame, textvariable=eAcc, width=15, state='readonly', justify=tk.CENTER)
+        self.eAcc = tk.DoubleVar(value=0.0)
+        entryAcc = tk.Entry(performance_frame, textvariable=self.eAcc, width=15, state='readonly', justify=tk.CENTER)
         entryAcc.grid(row=0, column=1, padx=10, pady=10, sticky=tk.E)
-        eLoss = tk.DoubleVar(value=0.0)
-        entryLoss = tk.Entry(performance_frame, textvariable=eLoss, width=15, state='readonly', justify=tk.CENTER)
+        self.eLoss = tk.DoubleVar(value=0.0)
+        entryLoss = tk.Entry(performance_frame, textvariable=self.eLoss, width=15, state='readonly', justify=tk.CENTER)
         entryLoss.grid(row=1, column=1, padx=10, pady=10, sticky=tk.E)
-        ePrecision = tk.DoubleVar(value=0.0)
-        entryPrecision = tk.Entry(performance_frame, textvariable=ePrecision, width=15, state='readonly', justify=tk.CENTER)
+        self.ePrecision = tk.DoubleVar(value=0.0)
+        entryPrecision = tk.Entry(performance_frame, textvariable=self.ePrecision, width=15, state='readonly', justify=tk.CENTER)
         entryPrecision.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
-        eRecall = tk.DoubleVar(value=0.0)
-        entryRecall = tk.Entry(performance_frame, textvariable=eRecall, width=15, state='readonly', justify=tk.CENTER)
+        self.eRecall = tk.DoubleVar(value=0.0)
+        entryRecall = tk.Entry(performance_frame, textvariable=self.eRecall, width=15, state='readonly', justify=tk.CENTER)
         entryRecall.grid(row=3, column=1, padx=10, pady=10, sticky=tk.E)
-        eF1 = tk.DoubleVar(value=0.0)
-        entryF1 = tk.Entry(performance_frame, textvariable=eF1, width=15, state='readonly', justify=tk.CENTER)
+        self.eF1 = tk.DoubleVar(value=0.0)
+        entryF1 = tk.Entry(performance_frame, textvariable=self.eF1, width=15, state='readonly', justify=tk.CENTER)
         entryF1.grid(row=4, column=1, padx=10, pady=10, sticky=tk.E)
         # endregion
     # endregion
