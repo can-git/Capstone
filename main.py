@@ -9,6 +9,7 @@ from matplotlib.backends.backend_tkagg import (
 from CenterScreen import center_screen_geometry
 from matplotlib.pyplot import MultipleLocator
 import mpl_toolkits.axisartist as axisartist
+import model as m
 
 
 class MyApp(tk.Frame):
@@ -19,7 +20,7 @@ class MyApp(tk.Frame):
         self.root.resizable(False, False)
 
         self.defaultBackground()
-
+        model = m
         # self.displayF()
         self.settingsF()
         self.ModelEvaluationF()
@@ -179,18 +180,18 @@ class MyApp(tk.Frame):
         lblRatio1.grid(row=0, column=1, padx=10, pady=10)
         lblRatio2 = tk.Label(data_frame, text="Ratio")
         lblRatio2.grid(row=1, column=1, padx=10, pady=10)
-        e1 = tk.DoubleVar(value=0.8)
-        entry = tk.Entry(data_frame, textvariable=e1, width=10)
-        entry.grid(row=0, column=2, padx=10, pady=10)
-        e2 = tk.DoubleVar(value=0.2)
-        entry2 = tk.Entry(data_frame, textvariable=e2, width=10)
-        entry2.grid(row=1, column=2, padx=10, pady=10)
+        self.eTrain = tk.DoubleVar(value=0.8)
+        entryTrain = tk.Entry(data_frame, textvariable=self.eTrain, width=10)
+        entryTrain.grid(row=0, column=2, padx=10, pady=10)
+        self.eTest = tk.DoubleVar(value=0.2)
+        entryTest = tk.Entry(data_frame, textvariable=self.eTest, width=10)
+        entryTest.grid(row=1, column=2, padx=10, pady=10)
 
-        valNormalizing = tk.IntVar(value=1)
-        ckbxNormalizing = tk.Checkbutton(data_frame, text="Normalizing", variable=valNormalizing)
+        self.valNormalizing = tk.IntVar(value=1)
+        ckbxNormalizing = tk.Checkbutton(data_frame, text="Normalizing", variable=self.valNormalizing)
         ckbxNormalizing.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
-        valMean = tk.IntVar()
-        ckbxMean = tk.Checkbutton(data_frame, text="Mean", variable=valMean)
+        self.valMean = tk.IntVar()
+        ckbxMean = tk.Checkbutton(data_frame, text="Mean", variable=self.valMean)
         ckbxMean.grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
         # endregion
 
@@ -210,12 +211,12 @@ class MyApp(tk.Frame):
         lblEpoch.grid(row=1, column=0, padx=10, pady=10, sticky=tk.W)
         lblBacth = tk.Label(model_frame, text="Batch Size")
         lblBacth.grid(row=2, column=0, padx=10, pady=10, sticky=tk.W)
-        e1 = tk.IntVar(value=1)
-        entry1 = tk.Entry(model_frame, textvariable=e1, width=10)
-        entry1.grid(row=1, column=1, padx=10, pady=10, sticky=tk.E)
-        e2 = tk.IntVar(value=1)
-        entry2 = tk.Entry(model_frame, textvariable=e2, width=10)
-        entry2.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
+        self.eEpoch = tk.IntVar(value=1)
+        entryEpoch = tk.Entry(model_frame, textvariable=self.eEpoch, width=10)
+        entryEpoch.grid(row=1, column=1, padx=10, pady=10, sticky=tk.E)
+        self.eBatch = tk.IntVar(value=1)
+        entryBatch = tk.Entry(model_frame, textvariable=self.eBatch, width=10)
+        entryBatch.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
         # endregion
 
         # region Filter
@@ -247,12 +248,12 @@ class MyApp(tk.Frame):
         lblPmin.grid(row=3, column=1)
         lblPmax = tk.Label(filter_frame, text="Pmax")
         lblPmax.grid(row=3, column=3)
-        e3 = tk.DoubleVar(value=12.0)
-        entry3 = tk.Entry(filter_frame, textvariable=e3, width=5)
-        entry3.grid(row=3, column=2)
-        e4 = tk.DoubleVar(value=14.0)
-        entry4 = tk.Entry(filter_frame, textvariable=e4, width=5)
-        entry4.grid(row=3, column=4)
+        ePmin = tk.DoubleVar(value=12.0)
+        entryPmin = tk.Entry(filter_frame, textvariable=ePmin, width=5)
+        entryPmin.grid(row=3, column=2)
+        ePmax = tk.DoubleVar(value=14.0)
+        entryPmax = tk.Entry(filter_frame, textvariable=ePmax, width=5)
+        entryPmax.grid(row=3, column=4)
 
         # endregion
     # endregion
@@ -261,6 +262,13 @@ class MyApp(tk.Frame):
     def ModelEvaluationF(self):
         # region Create
         def bar():
+            m.model.set_epoch(self, self.eEpoch.get())
+            m.model.set_batch(self, self.eBatch.get())
+            m.model.pr(self)
+
+
+
+
             import time
             progress['value'] = 20
             root.update_idletasks()
