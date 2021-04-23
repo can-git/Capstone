@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from CenterScreen import center_screen_geometry
 from matplotlib.pyplot import MultipleLocator
+from matplotlib.collections import LineCollection
 import mpl_toolkits.axisartist as axisartist
 import model as m
 import time
@@ -61,7 +62,7 @@ class MyApp(tk.Frame):
 
     # region Visualize Right Side
     def plot(self):
-        file = 'Data/edf_file.edf'
+        file = 'Emotiv 30s EDF/S001/S001E01.edf'
         data = mne.io.read_raw_edf(file, preload=True)
         tmin = 0
         tmax = 10
@@ -101,7 +102,6 @@ class MyApp(tk.Frame):
         canvas.draw()
 
     def plot2(self, data):
-
         fig = plt.figure(figsize=(9, 8), dpi=101)
         fig.clf()
         ax = axisartist.Subplot(fig, 111)
@@ -118,11 +118,13 @@ class MyApp(tk.Frame):
         fig.tight_layout()
         plt.margins(0.01, tight=True)
         plt.subplots_adjust(left=0.1, bottom=0.1, right=0.95, top=0.95)
-        plt.plot(np.transpose(data.crop(0, 10).get_data()), label=data.ch_names, linewidth=0.5)  # Set line color and width
+        plt.plot(np.transpose(data.crop(0, 100).get_data()), label=data.ch_names, linewidth=0.5)  # Set line color and width
         plt.legend()
         canvas = FigureCanvasTkAgg(fig, master=self.frameRight)
         canvas.get_tk_widget().grid(row=0, column=0)
         canvas.draw()
+
+
     # endregion
 
     # region DisplayF
@@ -134,11 +136,14 @@ class MyApp(tk.Frame):
                 data_temp = data_temp.drop_channels([i])
         self.plot2(data_temp)
 
+
     def open_file(self):
         self.file = filedialog.askopenfilename()
         self.data = mne.io.read_raw_edf(self.file, preload=True)
         self.plot2(self.data)
         self.displayF(self.data)
+        #print(self.data.get_data()[0])
+        #self.data.plot()
         return self.data
 
     def displayF(self, data):
@@ -279,9 +284,7 @@ class MyApp(tk.Frame):
             progress_bar(20, 'Getting Batch Size Value')
             m.model.set_batch(self, self.eBatch.get())
             progress_bar(30, 'Adding Train and Test Data')
-            m.model.add_data(self)
-            progress_bar(40, 'Reshaping')
-            m.model.reShape(self)
+            m.model.add_data(self, self.data, self.eTest.get())
             progress_bar(50, 'Creating Model')
             m.model.DecisionTreefit(self)
             progress_bar(90, 'Results Coming')
