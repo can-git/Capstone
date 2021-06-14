@@ -1,0 +1,17 @@
+
+Model Name = Support Vector Machine
+
+Date = May 26 2021
+Time = 19:12:38
+
+---SCORES---
+Accuracy: 0.9310344827586207
+Precision: 0.9518072289156627
+Recall: 0.9024390243902439
+F1: 0.9206294902497434
+
+---Confusion Matrix---
+TP: 33
+FP: 0
+FN: 8
+TN: 75

@@ -1,0 +1,17 @@
+
+Model Name = Decision Tree
+
+Date = June 03 2021
+Time = 01:21:23
+
+---SCORES---
+Accuracy: 0.9848156182212582
+Precision: 0.9829219112794818
+Recall: 0.9841841944047376
+F1: 0.9835472144470447
+
+---Confusion Matrix---
+TP: 163
+FP: 4
+FN: 3
+TN: 291
