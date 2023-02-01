@@ -1,0 +1,7 @@
+pandas
+future
+matplotlib
+numpy
+scikit-learn
+mne
+scipy

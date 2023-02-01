@@ -1,29 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-from keras.datasets import mnist
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, log_loss
-from tkinter import ttk
-import tkinter as tk
-from tkinter import filedialog
-import mne
-import time
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from datetime import datetime
-from threading import Thread
 import pickle
-import random
-import statistics
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
-import mpl_toolkits.axisartist as axisartist
-from matplotlib.pyplot import MultipleLocator
-from matplotlib.collections import LineCollection
 
 
 class model:
@@ -160,4 +146,5 @@ class model:
         for (icol,ival) in signals.iteritems():
             plt.scatter(x, ival.values, c=c, s=10)
         plt.plot(signals, '#95a5a6')
+        plt.savefig("Results/{}.png".format("result"))
         plt.show()

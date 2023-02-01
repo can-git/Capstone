@@ -1,14 +1,10 @@
 import pandas as pd
-import numpy as np
 from tkinter import ttk
 import tkinter as tk
 from tkinter import filedialog
-import mne
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from CenterScreen import center_screen_geometry
-from matplotlib.pyplot import MultipleLocator
-from matplotlib.collections import LineCollection
 import mpl_toolkits.axisartist as axisartist
 import model as m
 import time
@@ -357,7 +353,7 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.geometry(center_screen_geometry(screen_width=root.winfo_screenwidth(),
                                          screen_height=root.winfo_screenheight(),
-                                         window_width=1200,
-                                         window_height=800))
+                                         window_width=1366,
+                                         window_height=768))
     MyApp(root).pack(side="top", fill="both", expand=True)
     root.mainloop()
