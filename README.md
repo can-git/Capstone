@@ -74,6 +74,6 @@ are generated randomly as 0 and 1.
 
 ## Contributing :orange_heart:
 This capstone project is not finished in a correct way. We started with 4 people and finished by 2 of us.
-Thanks to my biomedical engineer [Bensu](www.linkedin.com/in/bensu-sengel-85248114b/?originalSubdomain=tr), who contributed to the report preparation of 
+Thanks to my biomedical engineer [Bensu](https://www.researchgate.net/profile/Bensu-Sengel), who contributed to the report preparation of 
 this project, which was challenging for me in those years, but which shows the development 
 of the process for now.
