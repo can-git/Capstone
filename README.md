@@ -68,6 +68,8 @@ on the combobox widgets.
 
 <p align="center"><img src="etc/result.png" height="350"></p>
 
+According to the image above, green colors represents the concentration mood and red colors represents relaxation moods.
+
 ## Problems :interrobang:
 The proposed dataset was not annotated because a student was expelled from the project. Therefore, annotations in the CSV file
 are generated randomly as 0 and 1. 
