@@ -3,6 +3,8 @@
 
 This repository contains the code for the capstone project report prepared for Bahçeşehir University. 
 
+:exclamation: Before using this project, please read the problems section first.
+
 The project is about to analyze brain signals and classifying the relaxation and concentration moods of the 
 signals by uV values over time points, by using several Machine Learning Methods. The system needs a proper data before using machine 
 learning and this side will be done by the biomedical engineering students but after that Decision Tree, Naive Bayes, Random Forest, Support Vectore Classifier, 
