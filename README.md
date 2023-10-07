@@ -1,5 +1,5 @@
 
-# EEG DATA ANALYSIS FOR DETECTING RELAXATION AND CONCENTRATION MOODS
+# EEG Data Analysis for Detecting Relaxating and Concentration Moods
 
 This repository contains the code for the capstone project report prepared for Bahçeşehir University. 
 
